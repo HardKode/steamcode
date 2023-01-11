@@ -35,20 +35,20 @@ func NewClient(httpConfig *HttpConfiguration) *HttpClient {
 // We have noticed the API returns always 2 types of response
 
 // one when it couldnt find anything
-type errorResponse struct {
+type ErrorResponse struct {
 	Response string `json:"Response"`
 	Error    string `json:"Error"`
 }
 
 // one when it has some data to return
-type successResponse struct {
+type SuccessResponse struct {
 	Search       interface{} `json:"Search"`
 	TotalResults string      `json:"totalResults"`
 	Response     string      `json:"Response"`
 }
 
 // good or bad , there is always a response
-type minimalResponse struct {
+type MinimalResponse struct {
 	Response string `json:"Response"`
 }
 
@@ -67,6 +67,7 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 	if err != nil {
 		return err
 	}
+
 	//Parse the response body
 	parsedBody, parseErr := c.ParseBody(resp.Body)
 	if parseErr != nil {
@@ -74,18 +75,12 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 		return errors.New(fmt.Sprintf("failed to parse response body: \n%s", parseErr))
 	}
 	fmt.Println("Reponse parsed successfully")
-	//Keep a buffer copy
+
+	//Keep a buffer copy since  the buffer drains after each decode
 	buf_minimal_response := bytes.NewBuffer(parsedBody)
 	defer resp.Body.Close()
 
-	//process the response : for some reason , with or without result , we get a 200 no 404
-	// what distinguishes the 2 cases is the existence of the Error attribute
-	// we have to parse to know that unfortunately . Would have been nice to be able to rely on error code
-
-	// body, err := c.ParseBody(resp.Body)
-	// if err != nil {
-	// 	return errors.New(fmt.Sprint("failed to parse response body: \n%s", err))
-	// }
+	// probably not much to do do if you dont get a 200
 	if resp.StatusCode != http.StatusOK {
 		//always expect a 200
 		fmt.Printf("the API did not return 200: %d\n", resp.StatusCode)
@@ -93,36 +88,43 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 		return errors.New(fmt.Sprintf("the API did not return 200"))
 	}
 
-	var alwaysExpectedData minimalResponse
-	if err := json.NewDecoder(buf_minimal_response).Decode(&alwaysExpectedData); err != nil {
+	//process the response
+	// for some reason , whether the search is successfull or not , we get a 200 not 404 as I would expect
+	// what distinguishes the 2 cases is the existence of the Error attribute
+	// we have to parse to know that unfortunately . Would have been nice to be able to just rely on error code
+
+	var minimalResponse MinimalResponse
+	if err := json.NewDecoder(buf_minimal_response).Decode(&minimalResponse); err != nil {
 		fmt.Println("Unknown error from the api")
 		return err
 	}
-	fmt.Printf("Mininal response : %v\n", alwaysExpectedData)
+	fmt.Printf("Mininal response : %v\n", minimalResponse)
 
-	if alwaysExpectedData.Response != "True" {
-		var errResponse errorResponse
+	// Now we need to decode the returned entities. That is error or success . The Response field tells us which one
+	if minimalResponse.Response != "True" {
+		var errorResponse ErrorResponse
 		buf_error_response := bytes.NewBuffer(parsedBody)
-		if err = json.NewDecoder(buf_error_response).Decode(&errResponse); err != nil {
+		if err = json.NewDecoder(buf_error_response).Decode(&errorResponse); err != nil {
 			fmt.Println("***Unknown errResponse from the api")
 			fmt.Println(err)
-			fmt.Printf("Error response : %v\n", errResponse)
+			fmt.Printf("Error response : %v\n", errorResponse)
 			return err
 		}
-		return errors.New(errResponse.Error)
+		return errors.New(errorResponse.Error)
 	}
 
-	response := successResponse{
+	successResponse := SuccessResponse{
 		Search: responseInterface,
 	}
 
 	buf_full_response := bytes.NewBuffer(parsedBody)
-	if err = json.NewDecoder(buf_full_response).Decode(&response); err != nil {
+	if err = json.NewDecoder(buf_full_response).Decode(&successResponse); err != nil {
 		fmt.Println(err)
 		fmt.Println("Error decoding success response from the api")
 		return err
 	}
 
+	fmt.Printf(" response : %v\n", successResponse)
 	return nil
 
 }
