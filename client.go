@@ -124,7 +124,7 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 		return err
 	}
 
-	fmt.Printf(" response : %v\n", successResponse)
+	// fmt.Printf(" response : %v\n", successResponse)
 	return nil
 
 }

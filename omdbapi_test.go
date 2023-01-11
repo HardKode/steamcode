@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,6 +21,7 @@ func TestGetFaces(t *testing.T) {
 	c := NewClient(httpConfiguration)
 
 	res, _ := c.Search("stem", &searchOptions)
+	fmt.Printf(" response : %v\n", res)
 	assert.NotNil(t, res, "expecting non-nil result")
 
 	// if res != nil {
