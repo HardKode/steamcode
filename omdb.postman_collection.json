@@ -1,0 +1,139 @@
+{
+	"info": {
+		"_postman_id": "6ac45af5-9b0e-42a2-b8a4-56ee70eb47c7",
+		"name": "omdb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25278497"
+	},
+	"item": [
+		{
+			"name": "simpleSearchByString",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{apiUrl}}/?apikey={{apiKey}}&s=stem&page=2",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "i",
+							"value": "tt3896198",
+							"disabled": true
+						},
+						{
+							"key": "t",
+							"value": "spiderman",
+							"disabled": true
+						},
+						{
+							"key": "s",
+							"value": "stem"
+						},
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "simplegetById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{apiUrl}}/?apikey={{apiKey}}&i=tt1810525",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "i",
+							"value": "tt1810525"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "simplegetByTitle",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{apiUrl}}/?apikey={{apiKey}}&t=The STEM Journals",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "t",
+							"value": "The STEM Journals"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://www.omdbapi.com/?apikey=44446a96&page=7&s=stem",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://www.omdbapi.com/?apikey=44446a96&page=6&s=stem",
+					"protocol": "http",
+					"host": [
+						"www",
+						"omdbapi",
+						"com"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "44446a96"
+						},
+						{
+							"key": "page",
+							"value": "6"
+						},
+						{
+							"key": "s",
+							"value": "stem"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
