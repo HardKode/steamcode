@@ -150,3 +150,5 @@ this was failing because of the case sentivity : S of science,= . Not sure if th
 ```
 
 solution : fix expected string to lowercase s because its within a sentence too
+
+Also added the postman collections and env I used
