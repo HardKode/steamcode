@@ -10,11 +10,45 @@ import (
 
 const defaultPageSize int = 10
 
+type SearchResByIdItem struct {
+	Title      string       `json:"Title"`
+	Year       string       `json:"Year"`
+	Rated      string       `json:"Rated"`
+	Released   string       `json:"Released"`
+	Runtime    string       `json:"Runtime"`
+	Genre      string       `json:"Genre"`
+	Director   string       `json:"Director"`
+	Writer     string       `json:"Writer"`
+	Actors     string       `json:"Actors"`
+	Plot       string       `json:"Plot"`
+	Language   string       `json:"Language"`
+	Country    string       `json:"Country"`
+	Awards     string       `json:"Awards"`
+	Poster     string       `json:"Poster"`
+	Ratings    []RatingItem `json:"Ratings"`
+	Metascore  string       `json:"Metascore"`
+	ImdbRating string       `json:"imdbRating"`
+	ImdbVotes  string       `json:"imdbVotes"`
+	ImdbID     string       `json:"imdbID"`
+	Type       string       `json:"Type"`
+	Dvd        string       `json:"DVD"`
+	BoxOffice  string       `json:"BoxOffice"`
+	Production string       `json:"Production"`
+	Website    string       `json:"Website"`
+	Response   string       `json:"Response"`
+}
+
+type RatingItem struct {
+	Source string `json:"Source"`
+	Value  string `json:"Value"`
+}
+
 // Search result
 type SearchRes struct {
-	Search       []SearchResItem `json:"Search"`
-	TotalResults string          `json:"totalResults"`
-	Response     string          `json:"Response"`
+	// Search       []SearchResItem `json:"Search"`
+	Search       []SearchResByIdItem `json:"Search"`
+	TotalResults string              `json:"totalResults"`
+	Response     string              `json:"Response"`
 }
 
 // Search result item
@@ -38,7 +72,7 @@ options : this allows to select a specific page , if nil its all pages
 
 returns : a list of SearchResItem
 */
-func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]SearchResItem, error) {
+func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]SearchResByIdItem, error) {
 
 	// Build base request
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s?s=%s", c.HttpConfig.BaseURL, searchstring), nil)
@@ -111,5 +145,29 @@ func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]Sear
 	fmt.Printf("total response size: %d , total results %d\n", len(responseList), totalResultsToProcess)
 
 	return responseList, nil
+
+}
+
+/*
+Omdb API get_by_id function
+idstring : The movie Id string
+
+returns : SearchResItem , a movie item
+*/
+func (c *HttpClient) get_by_id(idstring string) (*SearchResByIdItem, error) {
+
+	// Build base request
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?i=%s", c.HttpConfig.BaseURL, idstring), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response := SearchResByIdItem{}
+	if err := c.sendRequest(req, &response); err != nil {
+		//if the http call fails , bail out
+		return nil, err
+	}
+
+	return &response, nil
 
 }
