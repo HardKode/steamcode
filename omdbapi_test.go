@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,14 +14,15 @@ func TestGetFaces(t *testing.T) {
 		ApiKey:        "44446a96",
 	}
 
-	searchOptions := SearchOptions{
-		Page: 1,
-	}
 	c := NewClient(httpConfiguration)
 
-	res, _ := c.Search("stem", &searchOptions)
-	fmt.Printf(" response : %v\n", res)
+	res, err := c.Search("stem", nil)
+	assert.Nil(t, err, "expecting nil err")
 	assert.NotNil(t, res, "expecting non-nil result")
+
+	// if res != nil {
+	// 	fmt.Printf(" TotalResults : %s\n", res.TotalResults)
+	// }
 
 	// if res != nil {
 	// 	assert.Equal(t, 1, res.Count, "expecting 1 face found")

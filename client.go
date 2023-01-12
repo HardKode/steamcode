@@ -41,10 +41,16 @@ type ErrorResponse struct {
 }
 
 // one when it has some data to return
+// type SuccessResponse struct {
+// 	Search       interface{} `json:"Search"`
+// 	TotalResults string      `json:"totalResults"`
+// 	Response     string      `json:"Response"`
+// }
+
 type SuccessResponse struct {
-	Search       interface{} `json:"Search"`
-	TotalResults string      `json:"totalResults"`
-	Response     string      `json:"Response"`
+	Code           int
+	RawBody        []byte
+	ResponseObject interface{}
 }
 
 // good or bad , there is always a response
@@ -113,18 +119,21 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 		return errors.New(errorResponse.Error)
 	}
 
-	successResponse := SuccessResponse{
-		Search: responseInterface,
-	}
+	// successResponse := SuccessResponse{
+	// 	Code:           resp.StatusCode,
+	// 	ResponseObject: responseInterface,
+	// 	RawBody:        parsedBody,
+	// }
 
 	buf_full_response := bytes.NewBuffer(parsedBody)
-	if err = json.NewDecoder(buf_full_response).Decode(&successResponse); err != nil {
+	if err = json.NewDecoder(buf_full_response).Decode(&responseInterface); err != nil {
 		fmt.Println(err)
 		fmt.Println("Error decoding success response from the api")
 		return err
 	}
 
-	// fmt.Printf(" response : %v\n", successResponse)
+	// fmt.Printf(" response : %+q\n", successResponse)
+	// fmt.Printf(" response Object: %+q\n", successResponse.ResponseObject)
 	return nil
 
 }
