@@ -10,8 +10,39 @@ go version go1.19.5 darwin/arm64
 
 # ad testify 
 go get github.com/stretchr/testify/assert
+go get "github.com/Sirupsen/logrus"
 
+# run the tests
+while  being at the root of this directory
+APIKEY='xxxx' go test -v
 
+VERY IMPORTANT : The api  key is not hardcoded. it expects an environment variable called APIKEY
+you can also set it : declare -x APIKEY='xxx'
+or put in your bash profile, etc ...
+
+```
+stemcode % go test -v
+=== RUN   TestSearch
+page count -> : 6
+total response size: 55 , total results 55
+=== RUN   TestSearch/Assert_that_the_result_should_contain_at_least_30_items
+=== RUN   TestSearch/Assert_that_the_result_contains:_The_STEM_Journal_,Activision:_STEM_-_in_the_Videogame_Industry_
+=== RUN   TestSearch/Get_movie_by_Id(Activision:_STEM_-_in_the_Videogame_Industry)_detail_using_get_by_id_
+=== RUN   TestSearch/Get_movie_by__Title__(Activision:_STEM_-_in_the_Videogame_Industry)_detail_using_get_by_title_
+--- PASS: TestSearch (0.53s)
+    --- PASS: TestSearch/Assert_that_the_result_should_contain_at_least_30_items (0.00s)
+    --- PASS: TestSearch/Assert_that_the_result_contains:_The_STEM_Journal_,Activision:_STEM_-_in_the_Videogame_Industry_ (0.00s)
+    --- PASS: TestSearch/Get_movie_by_Id(Activision:_STEM_-_in_the_Videogame_Industry)_detail_using_get_by_id_ (0.08s)
+    --- PASS: TestSearch/Get_movie_by__Title__(Activision:_STEM_-_in_the_Videogame_Industry)_detail_using_get_by_title_ (0.11s)
+PASS
+ok      simple_api_client       0.755s
+```
+
+### code
+
+client.go : contains the client code . its a wrapper around the http library
+movies.go : contains the function used to research the movie database . Uses the client
+omdbapi_test.go : this has the tests methods used to exercise the client
 
 
 

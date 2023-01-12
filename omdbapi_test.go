@@ -1,6 +1,7 @@
 package client
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -12,7 +13,7 @@ func TestSearch(t *testing.T) {
 	httpConfiguration := &HttpConfiguration{
 		BaseURL:       "http://www.omdbapi.com/",
 		TimeoutMillis: 120000,
-		ApiKey:        "44446a96",
+		ApiKey:        os.Getenv("APIKEY"),
 	}
 
 	c := NewClient(httpConfiguration)
