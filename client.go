@@ -66,7 +66,7 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 	query := req.URL.Query()
 	query.Add("apikey", c.HttpConfig.ApiKey)
 	req.URL.RawQuery = query.Encode()
-	fmt.Println(req.URL.String())
+	// fmt.Println(req.URL.String())
 
 	// Send the request
 	resp, err := c.Impl.Do(req)
@@ -80,7 +80,7 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 		fmt.Println("failed to parse response body")
 		return errors.New(fmt.Sprintf("failed to parse response body: \n%s", parseErr))
 	}
-	fmt.Println("Reponse parsed successfully")
+	// fmt.Println("Reponse parsed successfully")
 
 	//Keep a buffer copy since  the buffer drains after each decode
 	buf_minimal_response := bytes.NewBuffer(parsedBody)
@@ -104,7 +104,7 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 		fmt.Println("Unknown error from the api")
 		return err
 	}
-	fmt.Printf("Mininal response : %v\n", minimalResponse)
+	// fmt.Printf("Mininal response : %v\n", minimalResponse)
 
 	// Now we need to decode the returned entities. That is error or success . The Response field tells us which one
 	if minimalResponse.Response != "True" {

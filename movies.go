@@ -51,7 +51,7 @@ func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]Sear
 		query.Add("page", strconv.Itoa(options.Page))
 		req.URL.RawQuery = query.Encode()
 	}
-	fmt.Println(req.URL.String())
+	// fmt.Println(req.URL.String())
 
 	response := SearchRes{}
 	if err := c.sendRequest(req, &response); err != nil {
@@ -84,7 +84,7 @@ func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]Sear
 		}
 		fmt.Printf("page count -> : %d\n", totalPages)
 		for pageIter := 2; pageIter <= totalPages; pageIter++ {
-			fmt.Printf(" page -> : %d\n", pageIter)
+			// fmt.Printf(" page -> : %d\n", pageIter)
 			//Query the page
 			response := SearchRes{}
 			req, err := http.NewRequest("GET", fmt.Sprintf("%s?s=%s&page=%d", c.HttpConfig.BaseURL, searchstring, pageIter), nil)

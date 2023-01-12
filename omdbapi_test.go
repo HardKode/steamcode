@@ -1,12 +1,13 @@
 package client
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetFaces(t *testing.T) {
+func TestSearch(t *testing.T) {
 
 	httpConfiguration := &HttpConfiguration{
 		BaseURL:       "http://www.omdbapi.com/",
@@ -20,20 +21,29 @@ func TestGetFaces(t *testing.T) {
 	assert.Nil(t, err, "expecting nil err")
 	assert.NotNil(t, res, "expecting non-nil result")
 
-	// if res != nil {
-	// 	fmt.Printf(" TotalResults : %s\n", res.TotalResults)
-	// }
+	if res != nil {
+		assert.Greater(t, len(res), 30, "expecting more than 30 results")
+	}
+	stringOne := "The STEM Journals"
+	stringTwo := "Activision: STEM - in the Videogame Industry"
 
-	// if res != nil {
-	// 	assert.Equal(t, 1, res.Count, "expecting 1 face found")
-	// 	assert.Equal(t, 1, res.PagesCount, "expecting 1 PAGE found")
+	foundStringOne := false
+	foundStringTwo := false
 
-	// 	if res.Count > 0 {
-	// 		assert.Equal(t, faceID, res.Faces[0].FaceID, "expecting correct face_id")
-	// 		assert.NotEmpty(t, res.Faces[0].FaceToken, "expecting non-empty face_token")
-	// 		assert.Greater(t, len(res.Faces[0].FaceImages), 0, "expecting non-empty face_images")
+	for _, items := range res {
+		if strings.Contains(items.Title, stringOne) {
+			foundStringOne = true
+		}
+		if strings.Contains(items.Title, stringTwo) {
+			foundStringTwo = true
+		}
 
-	// 		faceToken = res.Faces[0].FaceToken
-	// 	}
-	// }
+		if foundStringTwo == true && foundStringOne == true {
+			break
+		}
+	}
+
+	assert.Equal(t, true, foundStringOne, "expecting string : The STEM Journals")
+	assert.Equal(t, true, foundStringTwo, "Activision: STEM - in the Videogame Industry")
+
 }
