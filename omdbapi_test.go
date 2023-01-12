@@ -1,3 +1,6 @@
+//go:build simpletest || all
+// +build simpletest all
+
 package client
 
 import (
@@ -79,7 +82,7 @@ func TestSearch(t *testing.T) {
 
 	})
 
-	t.Run("Get movie by  Title  (Activision: STEM - in the Videogame Industry) detail using get_by_title ", func(*testing.T) {
+	t.Run("Get movie by  Title  (The STEM Journals) detail using get_by_title ", func(*testing.T) {
 
 		searchTitle := "The STEM Journals"
 		res, err := c.get_by_title(searchTitle)
