@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type HttpConfiguration struct {
@@ -40,13 +42,6 @@ type ErrorResponse struct {
 	Error    string `json:"Error"`
 }
 
-// one when it has some data to return
-// type SuccessResponse struct {
-// 	Search       interface{} `json:"Search"`
-// 	TotalResults string      `json:"totalResults"`
-// 	Response     string      `json:"Response"`
-// }
-
 type SuccessResponse struct {
 	Code           int
 	RawBody        []byte
@@ -62,11 +57,13 @@ type MinimalResponse struct {
 
 func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{}) error {
 
+	log.SetFormatter(&log.JSONFormatter{})
+
 	//add api key
 	query := req.URL.Query()
 	query.Add("apikey", c.HttpConfig.ApiKey)
 	req.URL.RawQuery = query.Encode()
-	// fmt.Println(req.URL.String())
+	log.Trace(req.URL.String())
 
 	// Send the request
 	resp, err := c.Impl.Do(req)
@@ -77,10 +74,10 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 	//Parse the response body
 	parsedBody, parseErr := c.ParseBody(resp.Body)
 	if parseErr != nil {
-		fmt.Println("failed to parse response body")
+		log.Error("failed to parse response body")
 		return errors.New(fmt.Sprintf("failed to parse response body: \n%s", parseErr))
 	}
-	// fmt.Println("Reponse parsed successfully")
+	log.Trace("Reponse parsed successfully")
 
 	//Keep a buffer copy since  the buffer drains after each decode
 	buf_minimal_response := bytes.NewBuffer(parsedBody)
@@ -89,8 +86,12 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 	// probably not much to do do if you dont get a 200
 	if resp.StatusCode != http.StatusOK {
 		//always expect a 200
-		fmt.Printf("the API did not return 200: %d\n", resp.StatusCode)
-		fmt.Printf("the API did not return 200:body:%s\n", string(parsedBody))
+		log.WithFields(
+			log.Fields{
+				"statuscode":   resp.StatusCode,
+				"responsebody": string(parsedBody),
+			},
+		).Error("the API did not return 200:")
 		return errors.New(fmt.Sprintf("the API did not return 200"))
 	}
 
@@ -101,10 +102,11 @@ func (c *HttpClient) sendRequest(req *http.Request, responseInterface interface{
 
 	var minimalResponse MinimalResponse
 	if err := json.NewDecoder(buf_minimal_response).Decode(&minimalResponse); err != nil {
-		fmt.Println("Unknown error from the api")
+		log.Error("Unknown error from the api")
 		return err
 	}
 	// fmt.Printf("Mininal response : %v\n", minimalResponse)
+	log.Trace("Mininal response OK")
 
 	// Now we need to decode the returned entities. That is error or success . The Response field tells us which one
 	if minimalResponse.Response != "True" {

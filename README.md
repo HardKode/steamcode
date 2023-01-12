@@ -44,6 +44,9 @@ client.go : contains the client code . its a wrapper around the http library
 movies.go : contains the function used to research the movie database . Uses the client
 omdbapi_test.go : this has the tests methods used to exercise the client
 
+# logging 
+ just put logrus in some spots
+
 
 
 

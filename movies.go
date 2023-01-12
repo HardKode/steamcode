@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Could not find the data anywhere but it looked like the default page size is 10 items , top 10
@@ -74,6 +76,8 @@ returns : a list of SearchResItem
 */
 func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]SearchResByIdItem, error) {
 
+	log.SetFormatter(&log.JSONFormatter{})
+
 	// Build base request
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s?s=%s", c.HttpConfig.BaseURL, searchstring), nil)
 	if err != nil {
@@ -86,6 +90,7 @@ func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]Sear
 		req.URL.RawQuery = query.Encode()
 	}
 	// fmt.Println(req.URL.String())
+	log.Info(req.URL.String())
 
 	response := SearchRes{}
 	if err := c.sendRequest(req, &response); err != nil {
@@ -116,7 +121,14 @@ func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]Sear
 		if totalResults%defaultPageSize != 0 {
 			totalPages++
 		}
-		fmt.Printf("page count -> : %d\n", totalPages)
+		// fmt.Printf("page count -> : %d\n", totalPages)
+		log.WithFields(
+			log.Fields{
+				"pagecount":    totalPages,
+				"totalResults": totalResults,
+			},
+		).Info("page count/info:")
+
 		for pageIter := 2; pageIter <= totalPages; pageIter++ {
 			// fmt.Printf(" page -> : %d\n", pageIter)
 			//Query the page
@@ -143,6 +155,12 @@ func (c *HttpClient) Search(searchstring string, options *SearchOptions) ([]Sear
 
 	// fmt.Printf(" response : %+q\n", responseList)
 	fmt.Printf("total response size: %d , total results %d\n", len(responseList), totalResultsToProcess)
+	log.WithFields(
+		log.Fields{
+			"responsesize":          len(responseList),
+			"totalResultsToProcess": totalResultsToProcess,
+		},
+	).Info("page count/info:")
 
 	return responseList, nil
 
