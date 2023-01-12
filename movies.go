@@ -171,3 +171,27 @@ func (c *HttpClient) get_by_id(idstring string) (*SearchResByIdItem, error) {
 	return &response, nil
 
 }
+
+/*
+Omdb API get_by_title function
+titlestring : The movie title string
+
+returns : SearchResItem , a movie item
+*/
+func (c *HttpClient) get_by_title(titlestring string) (*SearchResByIdItem, error) {
+
+	// Build base request
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?t=%s", c.HttpConfig.BaseURL, titlestring), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response := SearchResByIdItem{}
+	if err := c.sendRequest(req, &response); err != nil {
+		//if the http call fails , bail out
+		return nil, err
+	}
+
+	return &response, nil
+
+}

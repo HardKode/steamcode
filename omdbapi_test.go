@@ -51,7 +51,7 @@ func TestSearch(t *testing.T) {
 		assert.Equal(t, true, foundStringTwo, "Activision: STEM - in the Videogame Industry")
 	})
 
-	t.Run("Get movie (Activision: STEM - in the Videogame Industry) detail using get_by_id ", func(*testing.T) {
+	t.Run("Get movie by Id(Activision: STEM - in the Videogame Industry) detail using get_by_id ", func(*testing.T) {
 		stringTwo := "Activision: STEM - in the Videogame Industry"
 		stringReleaseDate := "23 Nov 2010"
 		stringDirector := "Mike Feurstein"
@@ -78,4 +78,19 @@ func TestSearch(t *testing.T) {
 
 	})
 
+	t.Run("Get movie by  Title  (Activision: STEM - in the Videogame Industry) detail using get_by_title ", func(*testing.T) {
+
+		searchTitle := "The STEM Journals"
+		res, err := c.get_by_title(searchTitle)
+		assert.Nil(t, err, "expecting nil err")
+		assert.NotNil(t, res, "expecting non-nil result")
+
+		// check readme for why we lower case .
+		plotstring := strings.ToLower("Science, Technology, Engineering and Math")
+		durationstring := "22 min"
+
+		assert.Contains(t, res.Plot, plotstring, "expecting the correct content in the plot")
+		assert.Equal(t, res.Runtime, durationstring, "expecting the correct runtime ")
+
+	})
 }
