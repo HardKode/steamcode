@@ -1,6 +1,6 @@
-# stemcode
+# stemcode coding exercise
 
-### install go on the system
+# install go on the system
 https://go.dev/dl/
 In my case i used brew , you can also download the arm darwin version : go1.19.5.darwin-arm64.pkg
 ```
@@ -13,22 +13,28 @@ go get github.com/stretchr/testify/assert
 go get "github.com/Sirupsen/logrus"
 
 # run the tests
-# basically we built go tests 
-while  being at the root of this directory , run command :
-APIKEY='xxxx' go test -v --tags=all
+
+basically we built go tests
+
+while  being at the root of this directory 
+
+run command :
+`APIKEY='xxxx' go test -v --tags=all`
 
 VERY IMPORTANT : The api  key is not hardcoded. it expects an environment variable called APIKEY
-you can also set it : declare -x APIKEY='xxx'
+
+you can also set it :` declare -x APIKEY='xxx'`
 or put in your bash profile, etc ...
 
 I built two test files :
-omdbapi_test.go : really basic go test with subtest
-omdbapi_tabletest_test.go : this test file uses a table mechanism which is a bit more separated and can be extended with data
+
+- omdbapi_test.go : really basic go test with subtest
+- omdbapi_tabletest_test.go : this test file uses a table mechanism which is a bit more separated and can be extended with data
 They all distinguished by tags 
 
-so to run omdbapi_test.go who has tab simpletest: go test -v --tags=simpletest
-so to run omdbapi_tabletest_test.go who has tab tabletest: go test -v --tags=tabletest
-to run them all : go test -v --tags=all
+-  to run omdbapi_test.go who has tab simpletest: `go test -v --tags=simpletest`
+- to run omdbapi_tabletest_test.go who has tab tabletest: `go test -v --tags=tabletest`
+- to run them all : `go test -v --tags=all`
 
 ```
 go test -v --tags=tabletest
@@ -134,11 +140,13 @@ omdbapi_test.go : this has the tests methods used to exercise the client
 Using get_by_title method, get item by title The STEM Journals and assert that the plot contains the string Science, Technology, Engineering and Math and has a runtime of 22 minutes.
 
 this was failing because of the case sentivity : S of science,= . Not sure if that was intentional
+```
 === CONT  TestSearch
     omdbapi_test.go:91: 
                 Error Trace:    /Users/toolgocollab/stemcode/omdbapi_test.go:91
                 Error:          "\"The STEM Journals\" follows hosts Brad Piccirillo as they explore new discoveries and exciting careers in the fields of science, technology, engineering and math." does not contain "Science, Technology, Engineering and Math"
                 Test:           TestSearch
                 Messages:       expecting the correct content in the plot
+```
 
 solution : fix expected string to lowercase s because its within a sentence too
